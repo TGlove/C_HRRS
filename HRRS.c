@@ -64,14 +64,21 @@ void mainMenu() {
 	puts("\t***************************************************");
 }
 
-void SubManu() {
+int SubManu() {
+	int c;
 	puts("\t***************************************************");
+	puts("\t*  Please select your choice !");
 	//BOOKING
+	puts("\t*  1. Booking the your room.");
 	//Cancellation
+	puts("\t*  2. Cancel your reservation.");
 	//Modify Booking
+	puts("\t*  3. Modify your former booking reservation.");
 	//View State
-	puts("\t* Please fill in details");
+	puts("\t*  4. View all your reservations");
 	puts("\t***************************************************");
+	scanf("%d", &c);
+	return c;
 }
 
 void BookingManu() {
@@ -127,7 +134,7 @@ int login_(u *u_head) {
 	char userId[8];
 	int passward,flag=0;
 	puts("please input your userId :");
-	scanf("%s", &userId);
+	scanf("%s", userId);
 	puts("please input your passward :");
 	scanf("%d", &passward);
 	u *u_pos = u_head->next;
@@ -220,8 +227,9 @@ void viewAvailableRooms_(r *r_head,re *re_new) {
 	r *r_pos = r_head->next;
 	while (r_pos)
 	{
+		puts(" ");
 		if (((r_pos->state) == 0) && (strcmp(r_pos->type,re_new->type)==0)) {
-			printf("Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);
+			printf("\t* Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);
 			r_pos = r_pos->next;
 			if (r_pos == NULL) {
 				break;
@@ -258,7 +266,7 @@ int insert_orders_(r *r_head,re *re_head) {
 		scanf("%s", re_new->name);
 		puts("\t* Please input the your age :");
 		scanf("%d", re_new->age);
-		puts("\t* Please input the your gender (eg: 'M' , 'W') ");
+		puts("\t* Please input the your gender (eg: 'M' , 'F') ");
 		scanf("%c", re_new->gender);
 		puts("\t* Please input the your ID number :");
 		scanf("%d", re_new->ID_number);
@@ -286,6 +294,146 @@ int insert_orders_(r *r_head,re *re_head) {
 	}
 }
 
+
+void view_user_orders_(re *re_head) {
+	char name[8];
+	puts("\t* Please enter your name : ");
+	scanf("%s", name);
+	re *re_pos = re_head->next;
+	while (re_pos)
+	{
+		puts(" ");
+		if (strcmp(re_pos->name, name) == 0) {
+			printf("\t* Name : %s , Age : %d", re_pos->name, re_pos->age);
+			printf("\t* Gender : %c , ID_number : %d", re_pos->gender, re_pos->ID_number);
+			printf("\t* Room_no : %d , Type : %c", re_pos->room_no, re_pos->type);
+			printf("\t* Adult_no : %d , Children_no : %d", re_pos->adults_no, re_pos->child_no);
+			printf("\t* Checkin_date : %s , Checkin_date : %s", re_pos->checkin_date, re_pos->checkout_date);
+		}
+		re_pos = re_pos->next;
+	}
+}
+
+int cancel_orders_(c *c_head,r *r_head,re *re_head) {
+	int room_no,result = 0;
+	puts("\t* The follwing will be  your reservations : ");
+	view_user_orders_(re_head);
+
+	//judgement for reservation exist	
+	re *re_pos = re_head;
+	if (re_head->next == NULL) {
+		puts("\t* There is no reservation to be cancelled!");
+		return result;
+	}
+	puts("\t* Please enter the room_no that will be canceled : ");
+	scanf("%d", &room_no);
+
+	//judgement for room exist
+	//delete reservation
+	while (re_pos->next)
+	{
+		if (room_no == re_pos->next->room_no) {
+			if (re_pos->next->next != NULL) {
+				re_pos->next = re_pos->next->next;
+				free(re_pos->next);
+			}
+			else
+			{
+				re_pos->next = NULL;
+				free(re_pos->next);
+			}		
+			puts("\t* Delete reservation successfully !");
+			result = 1;
+			break;
+		}
+		re_pos = re_pos->next;
+	}
+	if (result == 0) {
+		puts("\t* You did not reserve this room !");
+		return result;
+	}
+	//create new cancellation node
+	c *c_new = (c *)malloc(sizeof(c));
+	c_new->room_no = room_no;
+	c_new->next = NULL;
+	if (c_new != NULL) {
+		puts("\t* Please enter your name : ");
+		scanf("%s", c_new->name);
+		puts("\t* Please provide the specific reason to cancel reservation :  ");
+		scanf("%[^n]s", c_new->reason);
+	}
+	//insert new c node
+	c *c_pos = c_head;
+	while (c_pos->next)
+	{
+		c_pos = c_pos->next;
+	}
+	c_pos->next = c_new;
+	//change room state
+	r *r_pos = r_head->next;
+	while (r_pos)
+	{
+		if (c_new->room_no == r_pos->room_no) {
+			r_pos->state = 0;
+			break;
+		}
+		r_pos = r_pos->next;
+	}
+	
+}
+
+int modify_orders_(re *re_head) {
+	int room_no, result = 0;
+	puts("\t* The follwing will be  your reservations : ");
+	view_user_orders_(re_head);
+
+	//judgement for reservation exist	
+	re *re_pos = re_head;
+	if (re_head->next == NULL) {
+		puts("\t* There is no reservation to be modified!");
+		return result;
+	}
+	puts("\t* Please enter the room_no that will be modified : ");
+	scanf("%d", &room_no);
+	//judgement for room exist
+	//Modify reservation
+	while (re_pos)
+	{
+		if (room_no == re_pos->room_no) {
+			/*-------------------------------------------*/
+			puts("\t* Please select your room types : S , D , T   ");
+			scanf("%c", &re_pos->type);
+			puts("\t* Please input the number of Adults and childern (eg: 1,2)");
+			scanf("%d,%d", &re_pos->adults_no, &re_pos->child_no);
+			puts("\t* Please input the check-in date (eg: YYYY-MM-DD)");
+			scanf("%s", re_pos->checkin_date);
+			puts("\t* Please input the check-out date (eg: YYYY-MM-DD)");
+			scanf("%s", &re_pos->checkout_date);
+
+			puts(" ");
+			//occupants details
+			puts("\t* Please input the your name :");
+			scanf("%s", re_pos->name);
+			puts("\t* Please input the your age :");
+			scanf("%d", &re_pos->age);
+			puts("\t* Please input the your gender (eg: 'M' , 'F') ");
+			scanf("%c", &re_pos->gender);
+			puts("\t* Please input the your ID number :");
+			scanf("%d", &re_pos->ID_number);
+
+			/*-------------------------------------------*/
+			puts("\t* Modify reservation successfully !");
+			result = 1;
+			break;
+		}
+		re_pos = re_pos->next;
+	}
+	if (result == 0) {
+		puts("\t* You did not reserve this room !");
+		return result;
+	}
+}
+
 void main() {
 
 	u *u_head = (u *)malloc(sizeof(u));
@@ -306,20 +454,40 @@ void main() {
 		if (choice==1)
 		{			
 			int check=0; 
+		LOGIN:
 			check = login_(u_head);
+			// success login
 			if (check == 1) {
 				//SubMenu
-
-
-				// success login
-				/* Booking */
-				BookingManu();
-				insert_orders_(r_head, re_head);	
+				int c = 0;
+				c = SubManu();
+				if (c == 1) {					
+					/* Booking */
+					BookingManu();
+					int a = insert_orders_(r_head, re_head);
+				}
+				else if (c == 2) {
+					//cancellation reservation
+					int b = cancel_orders_(c_head, r_head, re_head);
+				}
+				else if (c == 3) {
+					//modify reservation
+					int c = modify_orders_(re_head);
+				}
+				else if (c == 4) {
+					//view reservation
+					view_user_orders_(re_head);
+				}
+				else
+				{
+					puts("\t* Wrong input!!!");
+				}	
 
 			}
 			else
 			{
 				puts("Wrong userId or passward! please try again!");
+				goto LOGIN;
 			}
 		}
 		else if (choice == 2) {
