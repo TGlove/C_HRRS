@@ -41,7 +41,7 @@ typedef struct reservation re;
 struct cancellation {
 	int room_no;
 	char name[8];
-	char reason[512];
+	char reason[100];
 	struct cancellation *next;
 };
 typedef struct cancellation c;
@@ -362,7 +362,7 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 		puts("\t* Please enter your name : ");
 		scanf("%s", c_new->name);
 		puts("\t* Please provide the specific reason to cancel reservation :  ");
-		scanf("%[^n]s", &c_new->reason);
+		scanf(" %[^\n]s",c_new->reason);
 	}
 	//insert new c node
 	c *c_pos = c_head;
@@ -404,13 +404,13 @@ int modify_orders_(re *re_head) {
 		if (room_no == re_pos->room_no) {
 			/*-------------------------------------------*/
 			puts("\t* Please select your room types : S , D , T   ");
-			scanf("%c", &re_pos->type);
+			scanf(" %c", &re_pos->type);
 			puts("\t* Please input the number of Adults and childern (eg: 1,2)");
 			scanf("%d,%d", &re_pos->adults_no, &re_pos->child_no);
 			puts("\t* Please input the check-in date (eg: YYYY-MM-DD)");
 			scanf("%s", re_pos->checkin_date);
 			puts("\t* Please input the check-out date (eg: YYYY-MM-DD)");
-			scanf("%s", &re_pos->checkout_date);
+			scanf("%s", re_pos->checkout_date);
 
 			puts(" ");
 			//occupants details
@@ -419,7 +419,7 @@ int modify_orders_(re *re_head) {
 			puts("\t* Please input the your age :");
 			scanf("%d", &re_pos->age);
 			puts("\t* Please input the your gender (eg: 'M' , 'F') ");
-			scanf("%c", &re_pos->gender);
+			scanf(" %c", &re_pos->gender);
 			puts("\t* Please input the your ID number :");
 			scanf("%d", &re_pos->ID_number);
 
