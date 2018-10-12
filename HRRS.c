@@ -4,7 +4,7 @@
 #include <time.h>
 #include <string.h>
 
-struct user{
+struct user {
 	char userId[8];
 	int passward;
 	struct user *next;
@@ -50,7 +50,7 @@ void register_();//
 int login_(u *u_head);//
 void cancel();
 void modify();
- /* only admin */
+/* only admin */
 void overView();
 
 void mainMenu() {
@@ -95,7 +95,7 @@ void register_(u *u_head) {
 
 	u *u_new = (u *)malloc(sizeof(u));
 	u_new->next = NULL;
-	if(u_new!=NULL){
+	if (u_new != NULL) {
 		puts("\t*Please input the userID : ");
 		scanf("%s", &(u_new->userId));
 		puts("\t*Please input the Passward : ");
@@ -114,8 +114,8 @@ void register_(u *u_head) {
 	u_rail->next = u_new;
 
 	puts("Register successfully!");
-	
-	}
+
+}
 
 void viewUsers_(u *u_head) {
 	u *u_pos = u_head->next;
@@ -132,15 +132,15 @@ void viewUsers_(u *u_head) {
 // login
 int login_(u *u_head) {
 	char userId[8];
-	int passward,flag=0;
+	int passward, flag = 0;
 	puts("please input your userId :");
 	scanf("%s", userId);
 	puts("please input your passward :");
 	scanf("%d", &passward);
 	u *u_pos = u_head->next;
 	while (u_pos)
-	{	
-		if((strcmp((u_pos->userId), userId) == 0) && ((u_pos->passward)==passward)) {
+	{
+		if ((strcmp((u_pos->userId), userId) == 0) && ((u_pos->passward) == passward)) {
 			flag = 1;
 			break;
 		}
@@ -223,12 +223,12 @@ void viewAllRooms_(r *r_head) {
 	}
 }
 
-void viewAvailableRooms_(r *r_head,re *re_new) {
+void viewAvailableRooms_(r *r_head, re *re_new) {
 	r *r_pos = r_head->next;
 	while (r_pos)
 	{
 		puts(" ");
-		if (((r_pos->state) == 0) && (strcmp(r_pos->type,re_new->type)==0)) {
+		if (((r_pos->state) == 0) && ((r_pos->type) == (re_new->type))) {
 			printf("\t* Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);
 			r_pos = r_pos->next;
 			if (r_pos == NULL) {
@@ -238,38 +238,40 @@ void viewAvailableRooms_(r *r_head,re *re_new) {
 		else
 		{
 			puts("NO Available Rooms , Full now ! ");
+			break;
 		}
 	}
 }
 
-int insert_orders_(r *r_head,re *re_head) {
+int insert_orders_(r *r_head, re *re_head) {
 	re *re_new = (re *)malloc(sizeof(re));
 	re_new->next = NULL;
 	if (re_new != NULL) {
 		puts("\t* Please select your room types : S , D , T   ");
-		scanf("%c", &re_new->type);
+		scanf(" %c", &re_new->type);
 		puts("\t* Please input the number of Adults and childern (eg: 1,2)");
 		scanf("%d,%d", &re_new->adults_no, &re_new->child_no);
 		puts("\t* Please input the check-in date (eg: YYYY-MM-DD)");
 		scanf("%s", &re_new->checkin_date);
 		puts("\t* Please input the check-out date (eg: YYYY-MM-DD)");
 		scanf("%s", &re_new->checkout_date);
-		puts("\t* For further confirmation, please select your room");
+		puts("\t* For further confirmation, please select your room\n");
 		puts("\t* The following is the list :");
 
 		viewAvailableRooms_(r_head, re_new);
 
 		puts(" ");
+		puts("\t* Please enter your room number : ");
 		scanf("%d", &re_new->room_no);
 		//occupants details
 		puts("\t* Please input the your name :");
 		scanf("%s", re_new->name);
 		puts("\t* Please input the your age :");
-		scanf("%d", re_new->age);
+		scanf("%d", &re_new->age);
 		puts("\t* Please input the your gender (eg: 'M' , 'F') ");
-		scanf("%c", re_new->gender);
+		scanf(" %c", &re_new->gender);
 		puts("\t* Please input the your ID number :");
-		scanf("%d", re_new->ID_number);
+		scanf("%d", &re_new->ID_number);
 		//insert node
 		re *re_rail = re_head;
 		while (re_rail->next)
@@ -304,18 +306,18 @@ void view_user_orders_(re *re_head) {
 	{
 		puts(" ");
 		if (strcmp(re_pos->name, name) == 0) {
-			printf("\t* Name : %s , Age : %d", re_pos->name, re_pos->age);
-			printf("\t* Gender : %c , ID_number : %d", re_pos->gender, re_pos->ID_number);
-			printf("\t* Room_no : %d , Type : %c", re_pos->room_no, re_pos->type);
-			printf("\t* Adult_no : %d , Children_no : %d", re_pos->adults_no, re_pos->child_no);
-			printf("\t* Checkin_date : %s , Checkin_date : %s", re_pos->checkin_date, re_pos->checkout_date);
+			printf("\t* Name : %s , Age : %d\n", re_pos->name, re_pos->age);
+			printf("\t* Gender : %c , ID_number : %d\n", re_pos->gender, re_pos->ID_number);
+			printf("\t* Room_no : %d , Type : %c\n", re_pos->room_no, re_pos->type);
+			printf("\t* Adult_no : %d , Children_no : %d\n", re_pos->adults_no, re_pos->child_no);
+			printf("\t* Checkin_date : %s , Checkin_date : %s\n", re_pos->checkin_date, re_pos->checkout_date);
 		}
 		re_pos = re_pos->next;
 	}
 }
 
-int cancel_orders_(c *c_head,r *r_head,re *re_head) {
-	int room_no,result = 0;
+int cancel_orders_(c *c_head, r *r_head, re *re_head) {
+	int room_no, result = 0;
 	puts("\t* The follwing will be  your reservations : ");
 	view_user_orders_(re_head);
 
@@ -341,7 +343,7 @@ int cancel_orders_(c *c_head,r *r_head,re *re_head) {
 			{
 				re_pos->next = NULL;
 				free(re_pos->next);
-			}		
+			}
 			puts("\t* Delete reservation successfully !");
 			result = 1;
 			break;
@@ -360,7 +362,7 @@ int cancel_orders_(c *c_head,r *r_head,re *re_head) {
 		puts("\t* Please enter your name : ");
 		scanf("%s", c_new->name);
 		puts("\t* Please provide the specific reason to cancel reservation :  ");
-		scanf("%[^n]s", c_new->reason);
+		scanf("%[^n]s", &c_new->reason);
 	}
 	//insert new c node
 	c *c_pos = c_head;
@@ -379,7 +381,7 @@ int cancel_orders_(c *c_head,r *r_head,re *re_head) {
 		}
 		r_pos = r_pos->next;
 	}
-	
+
 }
 
 int modify_orders_(re *re_head) {
@@ -440,7 +442,7 @@ void main() {
 	r *r_head = (r *)malloc(sizeof(r));
 	re *re_head = (re *)malloc(sizeof(re));
 	c *c_head = (c *)malloc(sizeof(c));
-	u_head->next = NULL;r_head->next = NULL;re_head->next = NULL;c_head->next = NULL;
+	u_head->next = NULL; r_head->next = NULL; re_head->next = NULL; c_head->next = NULL;
 	u admin = { "admin",123456 };
 	u_head->next = &admin;
 	initialization_(r_head);
@@ -451,9 +453,9 @@ void main() {
 		mainMenu();
 		int choice;
 		scanf("%d", &choice);
-		if (choice==1)
-		{			
-			int check=0; 
+		if (choice == 1)
+		{
+			int check = 0;
 		LOGIN:
 			check = login_(u_head);
 			// success login
@@ -461,7 +463,7 @@ void main() {
 				//SubMenu
 				int c = 0;
 				c = SubManu();
-				if (c == 1) {					
+				if (c == 1) {
 					/* Booking */
 					BookingManu();
 					int a = insert_orders_(r_head, re_head);
@@ -481,7 +483,7 @@ void main() {
 				else
 				{
 					puts("\t* Wrong input!!!");
-				}	
+				}
 
 			}
 			else
@@ -504,7 +506,7 @@ void main() {
 			puts("error!");
 		}
 	}
-	
+
 
 	_getch();
 }
