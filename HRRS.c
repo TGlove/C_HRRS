@@ -46,10 +46,9 @@ struct cancellation {
 };
 typedef struct cancellation c;
 
-void register_();//
+int register_(u *u_head);//
 int login_(u *u_head);//
-void cancel();
-void modify();
+void viewAllRooms_(r *r_head);
 /* only admin */
 void overView();
 
@@ -76,6 +75,33 @@ int SubManu() {
 	puts("\t*  3. Modify your former booking reservation.");
 	//View State
 	puts("\t*  4. View all your reservations");
+	//
+	puts("\t*  5. Go back to Main menu");
+	puts("\t*  6. Exit the system");
+	puts("\t***************************************************");
+	scanf("%d", &c);
+	return c;
+}
+
+int adminSubManu() {
+	int c;
+	puts("\t***************************************************");
+	puts("\t*  Please select your choice !");
+	//BOOKING
+	puts("\t*  1. Booking the your room.");
+	//Cancellation
+	puts("\t*  2. Cancel your reservation.");
+	//Modify Booking
+	puts("\t*  3. Modify your former booking reservation.");
+	//View State
+	puts("\t*  4. View all your reservations");
+	//
+	puts("\t*  5. Go back to Main menu");
+	puts("\t*  6. Exit the system");
+	//
+	puts("\t*  7. View all reservations");
+	puts("\t*  8. View all cancellations");
+	puts("\t*  9. View all rooms");
 	puts("\t***************************************************");
 	scanf("%d", &c);
 	return c;
@@ -91,13 +117,29 @@ void BookingManu() {
 	puts("\t***************************************************");
 }
 
-void register_(u *u_head) {
+int register_(u *u_head) {
 
 	u *u_new = (u *)malloc(sizeof(u));
 	u_new->next = NULL;
 	if (u_new != NULL) {
 		puts("\t*Please input the userID : ");
 		scanf("%s", &(u_new->userId));
+		//judgement userID redundency
+		int flag = 1;
+		u *u_pos = u_head->next;
+		if (u_pos != NULL) {
+			while (u_pos)
+			{
+				if (strcmp(u_pos->userId, u_new->userId) == 0) {
+					flag = 0;
+				}
+				u_pos = u_pos->next;
+			}
+		}
+		if (flag == 0) {
+			puts("\t* UserID already exit!");
+			return 0;
+		}
 		puts("\t*Please input the Passward : ");
 		scanf("%d", &(u_new->passward));
 	}
@@ -113,8 +155,9 @@ void register_(u *u_head) {
 	}
 	u_rail->next = u_new;
 
-	puts("Register successfully!");
+	puts("\t* Register successfully!");
 
+	return 1;
 }
 
 void viewUsers_(u *u_head) {
@@ -133,14 +176,18 @@ void viewUsers_(u *u_head) {
 int login_(u *u_head) {
 	char userId[8];
 	int passward, flag = 0;
-	puts("please input your userId :");
+	puts("\t* please input your userId :");
 	scanf("%s", userId);
-	puts("please input your passward :");
+	puts("\t* please input your passward :");
 	scanf("%d", &passward);
 	u *u_pos = u_head->next;
 	while (u_pos)
 	{
 		if ((strcmp((u_pos->userId), userId) == 0) && ((u_pos->passward) == passward)) {
+			if ((strcmp(userId, "admin") == 0) && (passward == 123456)) {
+				flag = 2;
+				break;
+			}
 			flag = 1;
 			break;
 		}
@@ -211,42 +258,32 @@ void initialization_(r *r_head) {
 
 }
 
-void viewAllRooms_(r *r_head) {
+int viewAvailableRooms_(r *r_head, re *re_new) {
 	r *r_pos = r_head->next;
+	int avi = 0;
+	puts("\t***************************************************");
 	while (r_pos)
-	{
-		printf("Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);
-		r_pos = r_pos->next;
-		if (r_pos == NULL) {
-			break;
-		}
-	}
-}
-
-void viewAvailableRooms_(r *r_head, re *re_new) {
-	r *r_pos = r_head->next;
-	while (r_pos)
-	{
-		puts(" ");
+	{		
 		if (((r_pos->state) == 0) && ((r_pos->type) == (re_new->type))) {
-			printf("\t* Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);
-			r_pos = r_pos->next;
-			if (r_pos == NULL) {
-				break;
-			}
+			avi = 1;
+			puts(" ");
+			printf("\t* Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);		
 		}
-		else
-		{
-			puts("NO Available Rooms , Full now ! ");
-			break;
-		}
+		r_pos = r_pos->next;
 	}
+	if (avi == 0) {
+		puts("\t* NO Available Rooms , Full now ! ");
+	}
+	puts("\t***************************************************");
+	return avi;
 }
 
 int insert_orders_(r *r_head, re *re_head) {
 	re *re_new = (re *)malloc(sizeof(re));
 	re_new->next = NULL;
 	if (re_new != NULL) {
+		puts(" ");
+		puts("\t***************************************************");
 		puts("\t* Please select your room types : S , D , T   ");
 		scanf(" %c", &re_new->type);
 		puts("\t* Please input the number of Adults and childern (eg: 1,2)");
@@ -255,14 +292,34 @@ int insert_orders_(r *r_head, re *re_head) {
 		scanf("%s", &re_new->checkin_date);
 		puts("\t* Please input the check-out date (eg: YYYY-MM-DD)");
 		scanf("%s", &re_new->checkout_date);
-		puts("\t* For further confirmation, please select your room\n");
+		puts("\t***************************************************");
+		puts(" ");
 		puts("\t* The following is the list :");
 
-		viewAvailableRooms_(r_head, re_new);
+		int avi = viewAvailableRooms_(r_head, re_new);
+
+		if (avi == 0) {
+			return avi;
+		}
 
 		puts(" ");
-		puts("\t* Please enter your room number : ");
+		puts("\t***************************************************");
+		puts("\t* For further confirmation, please enter your room number : ");
 		scanf("%d", &re_new->room_no);
+		//judgement type match room_no
+		r *r_po = r_head->next;
+		int flag = 0;
+		while (r_po)
+		{
+			if ((r_po->type) == (re_new->type) && r_po->room_no == re_new->room_no) {
+				flag = 1;
+			}
+			r_po = r_po->next;
+		}
+		if (flag == 0) {
+			puts("\t* There is no such room, wrong operation!");
+			return 0;
+		}
 		//occupants details
 		puts("\t* Please input the your name :");
 		scanf("%s", re_new->name);
@@ -270,8 +327,9 @@ int insert_orders_(r *r_head, re *re_head) {
 		scanf("%d", &re_new->age);
 		puts("\t* Please input the your gender (eg: 'M' , 'F') ");
 		scanf(" %c", &re_new->gender);
-		puts("\t* Please input the your ID number :");
+		puts("\t* Please input the your ID number (Digit Only):");
 		scanf("%d", &re_new->ID_number);
+		puts("\t***************************************************");
 		//insert node
 		re *re_rail = re_head;
 		while (re_rail->next)
@@ -289,23 +347,31 @@ int insert_orders_(r *r_head, re *re_head) {
 			}
 			r_pos = r_pos->next;
 		}
+		puts("\t* Order the room successfully!");
+		return avi;
 	}
 	else
 	{
 		puts("\t* Fail to apply space!");
+		return 0;
 	}
 }
 
 
-void view_user_orders_(re *re_head) {
+int view_user_orders_(re *re_head) {
 	char name[8];
 	puts("\t* Please enter your name : ");
 	scanf("%s", name);
+	// judgement name matched
+	int flag = 0;
+	puts("\t* The follwing will be  your reservations : ");	
+	puts("\t***************************************************");
 	re *re_pos = re_head->next;
 	while (re_pos)
 	{
 		puts(" ");
 		if (strcmp(re_pos->name, name) == 0) {
+			flag = 1;
 			printf("\t* Name : %s , Age : %d\n", re_pos->name, re_pos->age);
 			printf("\t* Gender : %c , ID_number : %d\n", re_pos->gender, re_pos->ID_number);
 			printf("\t* Room_no : %d , Type : %c\n", re_pos->room_no, re_pos->type);
@@ -314,12 +380,26 @@ void view_user_orders_(re *re_head) {
 		}
 		re_pos = re_pos->next;
 	}
+	puts("\t***************************************************");
+	if (flag == 0) {
+		puts("\t* You did not reserve any room!");
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
 }
 
 int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 	int room_no, result = 0;
-	puts("\t* The follwing will be  your reservations : ");
-	view_user_orders_(re_head);
+	int d = view_user_orders_(re_head);
+
+	//judgement name matched
+	if (d == 0) {
+		puts("\t* There is no such reservation for this name!");
+		return 0;
+	}
 
 	//judgement for reservation exist	
 	re *re_pos = re_head;
@@ -336,13 +416,13 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 	{
 		if (room_no == re_pos->next->room_no) {
 			if (re_pos->next->next != NULL) {
-				re_pos->next = re_pos->next->next;
 				free(re_pos->next);
+				re_pos->next = re_pos->next->next;				
 			}
 			else
 			{
-				re_pos->next = NULL;
 				free(re_pos->next);
+				re_pos->next = NULL;				
 			}
 			puts("\t* Delete reservation successfully !");
 			result = 1;
@@ -359,6 +439,8 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 	c_new->room_no = room_no;
 	c_new->next = NULL;
 	if (c_new != NULL) {
+		puts(" ");
+		puts("\t For better service, you need to provide details for cancellation");
 		puts("\t* Please enter your name : ");
 		scanf("%s", c_new->name);
 		puts("\t* Please provide the specific reason to cancel reservation :  ");
@@ -386,8 +468,12 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 
 int modify_orders_(re *re_head) {
 	int room_no, result = 0;
-	puts("\t* The follwing will be  your reservations : ");
-	view_user_orders_(re_head);
+	int d = view_user_orders_(re_head);
+	//judgement for name matched
+	if (d == 0) {
+		puts("\t* There is no such reservation for this name!");
+		return 0;
+	}
 
 	//judgement for reservation exist	
 	re *re_pos = re_head;
@@ -395,6 +481,7 @@ int modify_orders_(re *re_head) {
 		puts("\t* There is no reservation to be modified!");
 		return result;
 	}
+	puts(" ");
 	puts("\t* Please enter the room_no that will be modified : ");
 	scanf("%d", &room_no);
 	//judgement for room exist
@@ -403,6 +490,7 @@ int modify_orders_(re *re_head) {
 	{
 		if (room_no == re_pos->room_no) {
 			/*-------------------------------------------*/
+			puts("\t***************************************************");
 			puts("\t* Please select your room types : S , D , T   ");
 			scanf(" %c", &re_pos->type);
 			puts("\t* Please input the number of Adults and childern (eg: 1,2)");
@@ -420,8 +508,10 @@ int modify_orders_(re *re_head) {
 			scanf("%d", &re_pos->age);
 			puts("\t* Please input the your gender (eg: 'M' , 'F') ");
 			scanf(" %c", &re_pos->gender);
-			puts("\t* Please input the your ID number :");
+			puts("\t* Please input the your ID number (Digit Only):");
 			scanf("%d", &re_pos->ID_number);
+			puts("\t***************************************************");
+			puts(" ");
 
 			/*-------------------------------------------*/
 			puts("\t* Modify reservation successfully !");
@@ -434,6 +524,51 @@ int modify_orders_(re *re_head) {
 		puts("\t* You did not reserve this room !");
 		return result;
 	}
+}
+
+/* ---------------- Admin function --------------------*/
+void view_all_user_orders_(re *re_head) {
+
+	puts("\t* The follwing will are the reservations : ");
+	puts("\t***************************************************");
+	re *re_pos = re_head->next;
+	while (re_pos)
+	{
+		puts(" ");
+		printf("\t* Name : %s , Age : %d\n", re_pos->name, re_pos->age);
+		printf("\t* Gender : %c , ID_number : %d\n", re_pos->gender, re_pos->ID_number);
+		printf("\t* Room_no : %d , Type : %c\n", re_pos->room_no, re_pos->type);
+		printf("\t* Adult_no : %d , Children_no : %d\n", re_pos->adults_no, re_pos->child_no);
+		printf("\t* Checkin_date : %s , Checkin_date : %s\n", re_pos->checkin_date, re_pos->checkout_date);
+
+		re_pos = re_pos->next;
+	}
+	puts("\t***************************************************");
+}
+
+void view_all_user_cancellations_(c *c_head) {
+	c *c_pos = c_head->next;
+	puts("\t***************************************************");
+	while (c_pos)
+	{
+		puts(" ");
+		printf("\t* Room_no : %d\n",c_pos->room_no);
+		printf("\t* Name : %s\n", c_pos->name);
+		printf("\t* Reason : %s\n", c_pos->reason);
+		c_pos = c_pos->next;
+	}
+	puts("\t***************************************************");
+}
+
+void viewAllRooms_(r *r_head) {
+	r *r_pos = r_head->next;
+	puts("\t***************************************************");
+	while (r_pos)
+	{
+		printf("\t* Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);
+		r_pos = r_pos->next;
+	}
+	puts("\t***************************************************");
 }
 
 void main() {
@@ -450,7 +585,7 @@ void main() {
 
 	while (1)
 	{
-		mainMenu();
+		MAIN: mainMenu();
 		int choice;
 		scanf("%d", &choice);
 		if (choice == 1)
@@ -459,26 +594,48 @@ void main() {
 		LOGIN:
 			check = login_(u_head);
 			// success login
-			if (check == 1) {
-				//SubMenu
+			if (check == 1 || check==2) {
+				//SubMenu			
 				int c = 0;
-				c = SubManu();
+				if (check == 1) {
+					c = SubManu();
+				}
+				else
+				{
+					c = adminSubManu();
+				}
+				//admin Submenu
 				if (c == 1) {
 					/* Booking */
 					BookingManu();
-					int a = insert_orders_(r_head, re_head);
+					insert_orders_(r_head, re_head);
 				}
 				else if (c == 2) {
 					//cancellation reservation
-					int b = cancel_orders_(c_head, r_head, re_head);
+					cancel_orders_(c_head, r_head, re_head);
 				}
 				else if (c == 3) {
 					//modify reservation
-					int c = modify_orders_(re_head);
+					modify_orders_(re_head);
 				}
 				else if (c == 4) {
 					//view reservation
 					view_user_orders_(re_head);
+				}
+				else if (c == 5) {
+					continue;
+				}
+				else if (c == 6) {
+					break;
+				}
+				else if (c == 7) {
+					view_all_user_orders_(re_head);
+				}
+				else if (c == 8) {
+					view_all_user_cancellations_(c_head);
+				}
+				else if (c == 9) {
+					viewAllRooms_(r_head);
 				}
 				else
 				{
@@ -488,7 +645,7 @@ void main() {
 			}
 			else
 			{
-				puts("Wrong userId or passward! please try again!");
+				puts("\t* Wrong userId or passward! please try again!");
 				goto LOGIN;
 			}
 		}
@@ -503,7 +660,8 @@ void main() {
 		}
 		else
 		{
-			puts("error!");
+			puts("\t* error!");
+			goto MAIN;
 		}
 	}
 
