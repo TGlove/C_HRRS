@@ -55,29 +55,29 @@ void overView();
 void mainMenu() {
 	puts("\t***************************************************");
 	puts("\t*  WELCOM TO CLOWN HOTEL ROOM RESERVATION SYSTEM! *");
-	puts("\t*  Please login! If you do not have an accout");
-	puts("\t*  Please register! ");
-	puts("\t*  1. Login ");
-	puts("\t*  2. Register ");
-	puts("\t*  3. Exit the System ");
+	puts("\t*  Please login! If you do not have an accout     *");
+	puts("\t*  Please register!                               *");
+	puts("\t*  1. Login                                       *");
+	puts("\t*  2. Register                                    *");
+	puts("\t*  3. Exit the System                             *");
 	puts("\t***************************************************");
 }
 
 int SubManu() {
 	int c;
 	puts("\t***************************************************");
-	puts("\t*  Please select your choice !");
+	puts("\t*  Please select your choice !                    *");
 	//BOOKING
-	puts("\t*  1. Booking the your room.");
+	puts("\t*  1. Booking the your room.                      *");
 	//Cancellation
-	puts("\t*  2. Cancel your reservation.");
+	puts("\t*  2. Cancel your reservation.                    *");
 	//Modify Booking
-	puts("\t*  3. Modify your former booking reservation.");
+	puts("\t*  3. Modify your former booking reservation.     *");
 	//View State
-	puts("\t*  4. View all your reservations");
+	puts("\t*  4. View all your reservations                  *");
 	//
-	puts("\t*  5. Go back to Main menu");
-	puts("\t*  6. Exit the system");
+	puts("\t*  5. Go back to Main menu                        *");
+	puts("\t*  6. Exit the system                             *");
 	puts("\t***************************************************");
 	scanf("%d", &c);
 	return c;
@@ -86,22 +86,23 @@ int SubManu() {
 int adminSubManu() {
 	int c;
 	puts("\t***************************************************");
-	puts("\t*  Please select your choice !");
+	puts("\t*  Please select your choice !                    *");
 	//BOOKING
-	puts("\t*  1. Booking the your room.");
+	puts("\t*  1. Booking the your room.                      *");
 	//Cancellation
-	puts("\t*  2. Cancel your reservation.");
+	puts("\t*  2. Cancel your reservation.                    *");
 	//Modify Booking
-	puts("\t*  3. Modify your former booking reservation.");
+	puts("\t*  3. Modify your former booking reservation.     *");
 	//View State
-	puts("\t*  4. View all your reservations");
+	puts("\t*  4. View all your reservations                  *");
 	//
-	puts("\t*  5. Go back to Main menu");
-	puts("\t*  6. Exit the system");
+	puts("\t*  5. Go back to Main menu                        *");
+	puts("\t*  6. Exit the system                             *");
 	//
-	puts("\t*  7. View all reservations");
-	puts("\t*  8. View all cancellations");
-	puts("\t*  9. View all rooms");
+	puts("\t***************************************************");
+	puts("\t*  7. View all reservations                       *");
+	puts("\t*  8. View all cancellations                      *");
+	puts("\t*  9. View all rooms                              *");
 	puts("\t***************************************************");
 	scanf("%d", &c);
 	return c;
@@ -109,11 +110,11 @@ int adminSubManu() {
 
 void BookingManu() {
 	puts("\t***************************************************");
-	puts("\t* Please fill in details");
-	puts("\t* We provide 3 types of rooms: S ; D ; T   ");
-	puts("\t* Recommendation : S for single room (1 Adult ); ");
-	puts("\t* D for double beds room (2 Adults and 1 child); ");
-	puts("\t* T for Triple beds room (3 Adults and 2 children); ");
+	puts("\t* Please fill in details                          *");
+	puts("\t* We provide 3 types of rooms: S ; D ; T          *");
+	puts("\t* Recommendation : S for single room (1 Adult );  *");
+	puts("\t* D for double beds room (2 Adults and 1 child);  *");
+	puts("\t* T for Triple beds room (3 Adults and 2 children)*");
 	puts("\t***************************************************");
 }
 
@@ -267,7 +268,7 @@ int viewAvailableRooms_(r *r_head, re *re_new) {
 		if (((r_pos->state) == 0) && ((r_pos->type) == (re_new->type))) {
 			avi = 1;
 			puts(" ");
-			printf("\t* Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);
+			printf("\t* Room_no : %d ; Type : %c ; State : %d *\n", r_pos->room_no, r_pos->type, r_pos->state);
 		}
 		r_pos = r_pos->next;
 	}
