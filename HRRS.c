@@ -285,7 +285,7 @@ int insert_orders_(r *r_head, re *re_head) {
 	if (re_new != NULL) {
 		puts(" ");
 		puts("\t***************************************************");
-		puts("\t* Please select your room types : S , D , T   ");
+		puts("\t* Please select your room types : S , D , T  (Upper Alphabet Only)");
 		scanf(" %c", &re_new->type);
 		puts("\t* Please input the number of Adults and childern (eg: 1,2)");
 		scanf("%d,%d", &re_new->adults_no, &re_new->child_no);
