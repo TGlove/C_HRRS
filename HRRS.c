@@ -263,11 +263,11 @@ int viewAvailableRooms_(r *r_head, re *re_new) {
 	int avi = 0;
 	puts("\t***************************************************");
 	while (r_pos)
-	{		
+	{
 		if (((r_pos->state) == 0) && ((r_pos->type) == (re_new->type))) {
 			avi = 1;
 			puts(" ");
-			printf("\t* Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);		
+			printf("\t* Room_no : %d ; Type : %c ; State : %d\n", r_pos->room_no, r_pos->type, r_pos->state);
 		}
 		r_pos = r_pos->next;
 	}
@@ -311,13 +311,13 @@ int insert_orders_(r *r_head, re *re_head) {
 		int flag = 0;
 		while (r_po)
 		{
-			if ((r_po->type) == (re_new->type) && r_po->room_no == re_new->room_no) {
+			if ((r_po->type) == (re_new->type) && r_po->room_no == re_new->room_no && r_po->state==0) {
 				flag = 1;
 			}
 			r_po = r_po->next;
 		}
 		if (flag == 0) {
-			puts("\t* There is no such room, wrong operation!");
+			puts("\t* There is no such room, or the room is not available!");
 			return 0;
 		}
 		//occupants details
@@ -364,7 +364,7 @@ int view_user_orders_(re *re_head) {
 	scanf("%s", name);
 	// judgement name matched
 	int flag = 0;
-	puts("\t* The follwing will be  your reservations : ");	
+	puts("\t* The follwing will be  your reservations : ");
 	puts("\t***************************************************");
 	re *re_pos = re_head->next;
 	while (re_pos)
@@ -417,12 +417,12 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 		if (room_no == re_pos->next->room_no) {
 			if (re_pos->next->next != NULL) {
 				free(re_pos->next);
-				re_pos->next = re_pos->next->next;				
+				re_pos->next = re_pos->next->next;
 			}
 			else
 			{
 				free(re_pos->next);
-				re_pos->next = NULL;				
+				re_pos->next = NULL;
 			}
 			puts("\t* Delete reservation successfully !");
 			result = 1;
@@ -444,7 +444,7 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 		puts("\t* Please enter your name : ");
 		scanf("%s", c_new->name);
 		puts("\t* Please provide the specific reason to cancel reservation :  ");
-		scanf(" %[^\n]s",c_new->reason);
+		scanf(" %[^\n]s", c_new->reason);
 	}
 	//insert new c node
 	c *c_pos = c_head;
@@ -552,7 +552,7 @@ void view_all_user_cancellations_(c *c_head) {
 	while (c_pos)
 	{
 		puts(" ");
-		printf("\t* Room_no : %d\n",c_pos->room_no);
+		printf("\t* Room_no : %d\n", c_pos->room_no);
 		printf("\t* Name : %s\n", c_pos->name);
 		printf("\t* Reason : %s\n", c_pos->reason);
 		c_pos = c_pos->next;
@@ -585,7 +585,7 @@ void main() {
 
 	while (1)
 	{
-		MAIN: mainMenu();
+	MAIN: mainMenu();
 		int choice;
 		scanf("%d", &choice);
 		if (choice == 1)
@@ -594,7 +594,7 @@ void main() {
 		LOGIN:
 			check = login_(u_head);
 			// success login
-			if (check == 1 || check==2) {
+			if (check == 1 || check == 2) {
 				//SubMenu			
 				int c = 0;
 				if (check == 1) {
