@@ -27,8 +27,12 @@ struct reservation {
 	/* Booking */
 	int adults_no;
 	int child_no;
-	char checkin_date[20];
-	char checkout_date[20];
+	int checkin_date_year;
+	int checkin_date_month;
+	int checkin_date_day;
+	int checkout_date_year;
+	int checkout_date_month;
+	int checkout_date_day;
 	/* occupants details */
 	char name[8];
 	int age;
@@ -289,15 +293,51 @@ int insert_orders_(r *r_head, re *re_head) {
 		scanf(" %c", &re_new->type);
 		puts("\t* Please input the number of Adults and childern (eg: 1,2)");
 		scanf("%d,%d", &re_new->adults_no, &re_new->child_no);
-		puts("\t* Please input the check-in date (eg: YYYY-MM-DD)");
-		scanf("%s", &re_new->checkin_date);
-		puts("\t* Please input the check-out date (eg: YYYY-MM-DD)");
-		scanf("%s", &re_new->checkout_date);
+		puts("\t* Please input the year you wanna check-in :");
+		scanf("%d", &re_new->checkin_date_year);
+		puts("\t* Please input the month you wanna check-in :");
+		scanf("%d", &re_new->checkin_date_month);
+		puts("\t* Please input the day you wanna check-in :");
+		scanf("%d", &re_new->checkin_date_day);
+		puts("\t* Please input the year you wanna check-out :");
+		scanf("%d", &re_new->checkout_date_year);
+		puts("\t* Please input the month you wanna check-out :");
+		scanf("%d", &re_new->checkout_date_month);
+		puts("\t* Please input the day you wanna check-out :");
+		scanf("%d", &re_new->checkout_date_day);
 		puts("\t***************************************************");
 		puts(" ");
 		puts("\t* The following is the list :");
 
 		int avi = viewAvailableRooms_(r_head, re_new);
+
+		//check proper date
+		if (re_new->checkin_date_month <= 12 && re_new->checkin_date_month >= 1 && re_new->checkin_date_day >= 1 && re_new->checkin_date_day <= 31
+			&& re_new->checkout_date_month <= 12 && re_new->checkout_date_month >= 1 && re_new->checkout_date_day >= 1 && re_new->checkout_date_day <= 31
+			&& re_new->checkin_date_year <= re_new->checkout_date_year) {
+			if (re_new->checkin_date_year == re_new->checkout_date_year) {
+				if (re_new->checkin_date_month <= re_new->checkout_date_month) {
+					if (re_new->checkin_date_month == re_new->checkout_date_month) {
+						if (re_new->checkin_date_day <= re_new->checkout_date_day) {
+							puts("\t* Insert date successfully!");
+						}
+						else
+						{
+							puts("\t* Wrong operation! not a proper day or month input");
+							return 0;
+						}
+					}
+				}
+				else
+				{
+					puts("\t* Wrong operation! not a proper day or month input");
+					return 0;
+				}
+			}
+		}else {
+				puts("\t* Wrong operation! not a proper day or month input");
+				return 0;
+			}
 
 		if (avi == 0) {
 			return avi;
@@ -312,7 +352,7 @@ int insert_orders_(r *r_head, re *re_head) {
 		int flag = 0;
 		while (r_po)
 		{
-			if ((r_po->type) == (re_new->type) && r_po->room_no == re_new->room_no && r_po->state==0) {
+			if ((r_po->type) == (re_new->type) && r_po->room_no == re_new->room_no && r_po->state == 0) {
 				flag = 1;
 			}
 			r_po = r_po->next;
@@ -377,7 +417,8 @@ int view_user_orders_(re *re_head) {
 			printf("\t* Gender : %c , ID_number : %d\n", re_pos->gender, re_pos->ID_number);
 			printf("\t* Room_no : %d , Type : %c\n", re_pos->room_no, re_pos->type);
 			printf("\t* Adult_no : %d , Children_no : %d\n", re_pos->adults_no, re_pos->child_no);
-			printf("\t* Checkin_date : %s , Checkin_date : %s\n", re_pos->checkin_date, re_pos->checkout_date);
+			printf("\t* Checkin_date : %d-%d-%d\n", re_pos->checkin_date_year, re_pos->checkin_date_month, re_pos->checkin_date_day);
+			printf("\t* Checkout_date : %d-%d-%d\n", re_pos->checkout_date_year, re_pos->checkout_date_month, re_pos->checkout_date_day);
 		}
 		re_pos = re_pos->next;
 	}
@@ -468,7 +509,7 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 }
 
 int modify_orders_(re *re_head) {
-	int room_no, result = 0;
+	int room_no, result = 0, datecheck = 0;
 	int d = view_user_orders_(re_head);
 	//judgement for name matched
 	if (d == 0) {
@@ -496,10 +537,47 @@ int modify_orders_(re *re_head) {
 			scanf(" %c", &re_pos->type);
 			puts("\t* Please input the number of Adults and childern (eg: 1,2)");
 			scanf("%d,%d", &re_pos->adults_no, &re_pos->child_no);
-			puts("\t* Please input the check-in date (eg: YYYY-MM-DD)");
-			scanf("%s", re_pos->checkin_date);
-			puts("\t* Please input the check-out date (eg: YYYY-MM-DD)");
-			scanf("%s", re_pos->checkout_date);
+			puts("\t* Please input the year you wanna check-in :");
+			scanf("%d", &re_pos->checkin_date_year);
+			puts("\t* Please input the month you wanna check-in :");
+			scanf("%d", &re_pos->checkin_date_month);
+			puts("\t* Please input the day you wanna check-in :");
+			scanf("%d", &re_pos->checkin_date_day);
+			puts("\t* Please input the year you wanna check-out :");
+			scanf("%d", &re_pos->checkout_date_year);
+			puts("\t* Please input the month you wanna check-out :");
+			scanf("%d", &re_pos->checkout_date_month);
+			puts("\t* Please input the day you wanna check-out :");
+			scanf("%d", &re_pos->checkout_date_day);
+
+			//check proper date
+			if (re_pos->checkin_date_month <= 12 && re_pos->checkin_date_month >= 1 && re_pos->checkin_date_day >= 1 && re_pos->checkin_date_day <= 31
+				&& re_pos->checkout_date_month <= 12 && re_pos->checkout_date_month >= 1 && re_pos->checkout_date_day >= 1 && re_pos->checkout_date_day <= 31
+				&& re_pos->checkin_date_year <= re_pos->checkout_date_year) {
+				if (re_pos->checkin_date_year == re_pos->checkout_date_year) {
+					if (re_pos->checkin_date_month <= re_pos->checkout_date_month) {
+						if (re_pos->checkin_date_month == re_pos->checkout_date_month) {
+							if (re_pos->checkin_date_day <= re_pos->checkout_date_day) {
+								puts("\t* Insert date successfully!");
+							}
+							else
+							{
+								puts("\t* Wrong operation! not a proper day or month input");
+								return 0;
+							}
+						}
+					}
+					else
+					{
+						puts("\t* Wrong operation! not a proper day or month input");
+						return 0;
+					}
+				}
+			}
+			else {
+				puts("\t* Wrong operation! not a proper day or month input");
+				return 0;
+			}
 
 			puts(" ");
 			//occupants details
@@ -525,6 +603,10 @@ int modify_orders_(re *re_head) {
 		puts("\t* You did not reserve this room !");
 		return result;
 	}
+	if (datecheck == 0) {
+		puts("\t* Fail to modify the reservation !");
+		return 0;
+	}
 }
 
 /* ---------------- Admin function --------------------*/
@@ -540,7 +622,8 @@ void view_all_user_orders_(re *re_head) {
 		printf("\t* Gender : %c , ID_number : %d\n", re_pos->gender, re_pos->ID_number);
 		printf("\t* Room_no : %d , Type : %c\n", re_pos->room_no, re_pos->type);
 		printf("\t* Adult_no : %d , Children_no : %d\n", re_pos->adults_no, re_pos->child_no);
-		printf("\t* Checkin_date : %s , Checkin_date : %s\n", re_pos->checkin_date, re_pos->checkout_date);
+		printf("\t* Checkin_date : %d-%d-%d\n", re_pos->checkin_date_year, re_pos->checkin_date_month, re_pos->checkin_date_day);
+		printf("\t* Checkout_date : %d-%d-%d\n", re_pos->checkout_date_year, re_pos->checkout_date_month, re_pos->checkout_date_day);
 
 		re_pos = re_pos->next;
 	}
