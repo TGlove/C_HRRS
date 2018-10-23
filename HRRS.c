@@ -5,7 +5,7 @@
 #include <string.h>
 
 struct user {
-	char userId[8];
+	char userId[50];
 	int passward;
 	struct user *next;
 };
@@ -34,7 +34,7 @@ struct reservation {
 	int checkout_date_month;
 	int checkout_date_day;
 	/* occupants details */
-	char name[8];
+	char name[50];
 	int age;
 	char gender;
 	int ID_number;
@@ -44,7 +44,7 @@ typedef struct reservation re;
 
 struct cancellation {
 	int room_no;
-	char name[8];
+	char name[50];
 	char reason[100];
 	struct cancellation *next;
 };
@@ -84,6 +84,7 @@ int SubManu() {
 	puts("\t*  6. Exit the system                             *");
 	puts("\t***************************************************");
 	scanf("%d", &c);
+	system("cls");
 	return c;
 }
 
@@ -109,6 +110,7 @@ int adminSubManu() {
 	puts("\t*  9. View all rooms                              *");
 	puts("\t***************************************************");
 	scanf("%d", &c);
+	system("cls");
 	return c;
 }
 
@@ -142,14 +144,16 @@ int register_(u *u_head) {
 			}
 		}
 		if (flag == 0) {
+			system("cls");
 			puts("\t* UserID already exit!");
 			return 0;
 		}
-		puts("\t*Please input the Passward : ");
+		puts("\t*Please input the Passward : (Digit Only)");
 		scanf("%d", &(u_new->passward));
 	}
 	else
 	{
+		system("cls");
 		puts("Fail to register!");
 	}
 	// insert new node
@@ -160,6 +164,7 @@ int register_(u *u_head) {
 	}
 	u_rail->next = u_new;
 
+	system("cls");
 	puts("\t* Register successfully!");
 
 	return 1;
@@ -179,7 +184,7 @@ void viewUsers_(u *u_head) {
 
 // login
 int login_(u *u_head) {
-	char userId[8];
+	char userId[50];
 	int passward, flag = 0;
 	puts("\t* please input your userId :");
 	scanf("%s", userId);
@@ -198,6 +203,7 @@ int login_(u *u_head) {
 		}
 		u_pos = u_pos->next;
 	}
+	system("cls");
 	return flag;
 }
 
@@ -323,6 +329,7 @@ int insert_orders_(r *r_head, re *re_head) {
 						}
 						else
 						{
+							system("cls");
 							puts("\t* Wrong operation! not a proper day or month input");
 							return 0;
 						}
@@ -330,11 +337,13 @@ int insert_orders_(r *r_head, re *re_head) {
 				}
 				else
 				{
+					system("cls");
 					puts("\t* Wrong operation! not a proper day or month input");
 					return 0;
 				}
 			}
 		}else {
+				system("cls");
 				puts("\t* Wrong operation! not a proper day or month input");
 				return 0;
 			}
@@ -358,6 +367,7 @@ int insert_orders_(r *r_head, re *re_head) {
 			r_po = r_po->next;
 		}
 		if (flag == 0) {
+			system("cls");
 			puts("\t* There is no such room, or the room is not available!");
 			return 0;
 		}
@@ -388,11 +398,13 @@ int insert_orders_(r *r_head, re *re_head) {
 			}
 			r_pos = r_pos->next;
 		}
+		system("cls");
 		puts("\t* Order the room successfully!");
 		return avi;
 	}
 	else
 	{
+		system("cls");
 		puts("\t* Fail to apply space!");
 		return 0;
 	}
@@ -400,7 +412,7 @@ int insert_orders_(r *r_head, re *re_head) {
 
 
 int view_user_orders_(re *re_head) {
-	char name[8];
+	char name[50];
 	puts("\t* Please enter your name : ");
 	scanf("%s", name);
 	// judgement name matched
@@ -424,6 +436,7 @@ int view_user_orders_(re *re_head) {
 	}
 	puts("\t***************************************************");
 	if (flag == 0) {
+		system("cls");
 		puts("\t* You did not reserve any room!");
 		return 0;
 	}
@@ -439,6 +452,7 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 
 	//judgement name matched
 	if (d == 0) {
+		system("cls");
 		puts("\t* There is no such reservation for this name!");
 		return 0;
 	}
@@ -446,6 +460,7 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 	//judgement for reservation exist	
 	re *re_pos = re_head;
 	if (re_head->next == NULL) {
+		system("cls");
 		puts("\t* There is no reservation to be cancelled!");
 		return result;
 	}
@@ -466,6 +481,7 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 				free(re_pos->next);
 				re_pos->next = NULL;
 			}
+			system("cls");
 			puts("\t* Delete reservation successfully !");
 			result = 1;
 			break;
@@ -473,6 +489,7 @@ int cancel_orders_(c *c_head, r *r_head, re *re_head) {
 		re_pos = re_pos->next;
 	}
 	if (result == 0) {
+		system("cls");
 		puts("\t* You did not reserve this room !");
 		return result;
 	}
@@ -513,6 +530,7 @@ int modify_orders_(re *re_head) {
 	int d = view_user_orders_(re_head);
 	//judgement for name matched
 	if (d == 0) {
+		system("cls");
 		puts("\t* There is no such reservation for this name!");
 		return 0;
 	}
@@ -520,6 +538,7 @@ int modify_orders_(re *re_head) {
 	//judgement for reservation exist	
 	re *re_pos = re_head;
 	if (re_head->next == NULL) {
+		system("cls");
 		puts("\t* There is no reservation to be modified!");
 		return result;
 	}
@@ -533,8 +552,6 @@ int modify_orders_(re *re_head) {
 		if (room_no == re_pos->room_no) {
 			/*-------------------------------------------*/
 			puts("\t***************************************************");
-			puts("\t* Please select your room types : S , D , T   ");
-			scanf(" %c", &re_pos->type);
 			puts("\t* Please input the number of Adults and childern (eg: 1,2)");
 			scanf("%d,%d", &re_pos->adults_no, &re_pos->child_no);
 			puts("\t* Please input the year you wanna check-in :");
@@ -562,6 +579,7 @@ int modify_orders_(re *re_head) {
 							}
 							else
 							{
+								system("cls");
 								puts("\t* Wrong operation! not a proper day or month input");
 								return 0;
 							}
@@ -569,12 +587,14 @@ int modify_orders_(re *re_head) {
 					}
 					else
 					{
+						system("cls");
 						puts("\t* Wrong operation! not a proper day or month input");
 						return 0;
 					}
 				}
 			}
 			else {
+				system("cls");
 				puts("\t* Wrong operation! not a proper day or month input");
 				return 0;
 			}
@@ -593,6 +613,7 @@ int modify_orders_(re *re_head) {
 			puts(" ");
 
 			/*-------------------------------------------*/
+			system("cls");
 			puts("\t* Modify reservation successfully !");
 			result = 1;
 			break;
@@ -600,12 +621,9 @@ int modify_orders_(re *re_head) {
 		re_pos = re_pos->next;
 	}
 	if (result == 0) {
+		system("cls");
 		puts("\t* You did not reserve this room !");
 		return result;
-	}
-	if (datecheck == 0) {
-		puts("\t* Fail to modify the reservation !");
-		return 0;
 	}
 }
 
@@ -696,14 +714,17 @@ void main() {
 				}
 				else if (c == 2) {
 					//cancellation reservation
+					system("cls");
 					cancel_orders_(c_head, r_head, re_head);
 				}
 				else if (c == 3) {
 					//modify reservation
+					system("cls");
 					modify_orders_(re_head);
 				}
 				else if (c == 4) {
 					//view reservation
+					system("cls");
 					view_user_orders_(re_head);
 				}
 				else if (c == 5) {
@@ -713,30 +734,37 @@ void main() {
 					break;
 				}
 				else if (c == 7) {
+					system("cls");
 					view_all_user_orders_(re_head);
 				}
 				else if (c == 8) {
+					system("cls");
 					view_all_user_cancellations_(c_head);
 				}
 				else if (c == 9) {
+					system("cls");
 					viewAllRooms_(r_head);
 				}
 				else
 				{
+					system("cls");
 					puts("\t* Wrong input!!!");
 				}
 
 			}
 			else
 			{
+				system("cls");
 				puts("\t* Wrong userId or passward! please try again!");
 				goto LOGIN;
 			}
 		}
 		else if (choice == 2) {
+			system("cls");
 			register_(u_head);
 		}
 		else if (choice == 12) {
+			system("cls");
 			viewUsers_(u_head);
 		}
 		else if (choice == 3) {
@@ -744,6 +772,7 @@ void main() {
 		}
 		else
 		{
+			system("cls");
 			puts("\t* error!");
 			goto MAIN;
 		}
